@@ -45,6 +45,8 @@ import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.track.safezone.R;
 import com.track.safezone.beans.User;
+import com.track.safezone.database.SafeZoneDatabase;
+import com.track.safezone.database.impl.FirebaseDB;
 import com.track.safezone.places.PlacesAutoCompleteAdapter;
 import com.track.safezone.utils.PermissionUtils;
 
@@ -87,6 +89,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private User userData;
     private Place userPlace;
 
+    private SafeZoneDatabase database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +102,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         this.searchText = (AutoCompleteTextView) findViewById(R.id.input_search_location);
         this.gpsIcon = (ImageView) findViewById(R.id.ic_gps);
         this.confirmButton = (Button) findViewById(R.id.button_confirm_location);
+
+        this.database = FirebaseDB.getInstance();
 
         if (!Places.isInitialized()) {
             Places.initialize(this, "AIzaSyDK02Q7uQ0WjVYaoCH4BZ6Xu_6QohuvyA0");
@@ -238,6 +244,11 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         confirmButton.setOnClickListener(button -> {
             userData.setGpsLocation(userPlace);
+            database.updateUserLocation(userData);
+            Intent intent = new Intent(this, StartQuarantineActivity.class);
+            //intent.putExtra("user", userData);
+
+            startActivity(intent);
 
         });
 
@@ -340,6 +351,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                             @Override
                             public void run() {
                                 FetchPlaceResponse result = placeTask.getResult();
+
                                 moveCamera(result.getPlace().getLatLng(), 15f, "Location", true);
                                 confirmButton.setVisibility(View.VISIBLE);
                                 userPlace = result.getPlace();
