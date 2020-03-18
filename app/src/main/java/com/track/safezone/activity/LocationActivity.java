@@ -246,7 +246,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         confirmButton.setOnClickListener(button -> {
             userData.setGpsLocation(userPlace);
             database.updateUserLocation(userData);
-            Intent intent = new Intent(this, StartQuarantineActivity.class);
+            Intent intent = new Intent(this, CameraUploadFirstImageActivity.class);
+            intent.putExtra(Constants.RETURN_ACTIVITY, StartQuarantineActivity.class);
             //intent.putExtra("user", userData);
 
             startActivity(intent);

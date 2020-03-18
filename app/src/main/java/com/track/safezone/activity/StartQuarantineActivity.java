@@ -5,7 +5,11 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +22,9 @@ import com.track.safezone.utils.ViewHelper;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class StartQuarantineActivity extends AppCompatActivity {
 
@@ -29,6 +35,9 @@ public class StartQuarantineActivity extends AppCompatActivity {
 
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
+    private Button startTrackingButton;
+
+    private List<CheckBox> allCheckboxes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +46,25 @@ public class StartQuarantineActivity extends AppCompatActivity {
 
 
         this.database = FirebaseDB.getInstance();
-        Button startTrackingButton = (Button) findViewById(R.id.button_start_tracking);
+        this.startTrackingButton = (Button) findViewById(R.id.button_start_tracking);
         TextView observationStarted = (TextView) findViewById(R.id.text_observation_started);
         TextView observationLegalMsg = (TextView) findViewById(R.id.textLegalDescription);
 
+
+        this.findAllCheckboxes();
+        this.applyListenerOnAllCheckboxes();
+
+        ImageView tick = findViewById(R.id.icon_tick_observation_conditions);
+
+
         startTrackingButton.setOnClickListener(view -> {
+
+            for(CheckBox c: allCheckboxes) {
+                c.setEnabled(false);
+            }
+
+            startTrackingButton.setEnabled(false);
+
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             Date date = new Date();
             try {
@@ -50,8 +73,7 @@ public class StartQuarantineActivity extends AppCompatActivity {
                 Log.e(TAG, "onCreate: ", e);
             }
 
-            ViewHelper.hideViews(startTrackingButton, observationLegalMsg);
-            ViewHelper.showViews(observationStarted);
+            ViewHelper.showViews(observationStarted, tick);
 
 //            alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 //            final BroadcastReceiver receiver = new AlarmReceiver();
@@ -95,5 +117,47 @@ public class StartQuarantineActivity extends AppCompatActivity {
             Intent i = new Intent(getApplicationContext(), ConfirmObservationStatusActivity.class);
             startActivity(i);
         });
+    }
+
+    private void findAllCheckboxes() {
+        LinearLayout rootLinearLayout = (LinearLayout) findViewById(R.id.layout_content_upper);
+        int count = rootLinearLayout.getChildCount();
+        for (int i = 0; i < count; i++) {
+            View v = rootLinearLayout.getChildAt(i);
+            if (v instanceof CheckBox) {
+                CheckBox c = (CheckBox) v;
+                allCheckboxes.add(c);
+            }
+        }
+    }
+
+    private View.OnClickListener checkboxOnClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            boolean allChecked = true;
+
+            for(CheckBox c: allCheckboxes) {
+                if (!c.isChecked()) {
+                    allChecked = false;
+                    break;
+                }
+            }
+            
+            if (allChecked) {
+                startTrackingButton.setVisibility(View.VISIBLE);
+                startTrackingButton.setEnabled(true);
+
+            }
+        }
+    };
+
+    private void applyListenerOnAllCheckboxes() {
+
+        LinearLayout rootLinearLayout = (LinearLayout) findViewById(R.id.layout_content_upper);
+        int count = rootLinearLayout.getChildCount();
+        for (CheckBox c: allCheckboxes) {
+            c.setOnClickListener(checkboxOnClickListener);
+        }
     }
 }

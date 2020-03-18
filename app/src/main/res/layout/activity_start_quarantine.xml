@@ -1,48 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.StartQuarantineActivity">
+    android:layout_marginLeft="20dp"
+    android:layout_marginTop="30dp"
+    android:layout_marginRight="20dp"
+    tools:context=".activity.StartQuarantineActivity"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textLegalDescription"
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/layout_content_upper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
-        android:layout_marginTop="88dp"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="textMultiLine"
-        android:text="@string/text_quarantine_legal_message"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="10dp">
 
-    <Button
-        android:id="@+id/button_start_tracking"
-        android:layout_width="257dp"
-        android:layout_height="94dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginLeft="84dp"
-        android:layout_marginTop="488dp"
-        android:text="@string/button_start_tracking_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/textLegalDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="20dp"
+            android:ems="10"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
+            android:text="@string/text_quarantine_legal_message"
+            android:textSize="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/text_observation_started"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
-        android:layout_marginTop="88dp"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="textMultiLine"
-        android:visibility="invisible"
-        android:text="@string/text_observation_started_message"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <CheckBox
+            android:id="@+id/checkBox_under_observation_15_days"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:height="20dp"
+            android:textSize="20dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/checkBox_under_observation_15_days" />
+
+        <CheckBox
+            android:id="@+id/checkBox_upload_photo"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="20dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/checkBox_upload_photo" />
+        <CheckBox
+            android:id="@+id/checkBox_keep_location_on"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="20dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/checkBox_keep_location_on" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/icon_tick_observation_conditions"
+            android:src="@drawable/ic_check"
+            android:visibility="invisible"
+            android:layout_gravity="center"
+            android:layout_width="300px"
+            android:layout_height="300px">
+
+        </ImageView>
+
+        <TextView
+            android:id="@+id/text_observation_started"
+            android:textSize="15dp"
+            android:layout_margin="20dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:inputType="textMultiLine"
+            android:visibility="invisible"
+            android:text="@string/text_observation_started_message"
+            android:layout_width="wrap_content" />
+
+        <Button
+            android:id="@+id/button_start_tracking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:enabled="false"
+            android:visibility="invisible"
+            android:textSize="25dp"
+            android:ellipsize="middle"
+            android:text="@string/button_start_tracking_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

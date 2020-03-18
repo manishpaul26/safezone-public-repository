@@ -1,5 +1,6 @@
 package com.track.safezone.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +20,7 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
 
 
     private static final String TAG = "ConfirmObservationStatu";
+
     LocationTrack locationTrack;
     private SafeZoneDatabase database;
 
@@ -30,9 +32,9 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
 
         this.database = FirebaseDB.getInstance();
 
-        Button confirmPresence = (Button) findViewById(R.id.button_confirm_periodic_location);
+        Button confirmPresenceButton = (Button) findViewById(R.id.button_confirm_periodic_location);
 
-        confirmPresence.setOnClickListener(v -> {
+        confirmPresenceButton.setOnClickListener(v -> {
             locationTrack = new LocationTrack(ConfirmObservationStatusActivity.this);
 
             if (locationTrack.canGetLocation()) {
@@ -53,10 +55,16 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
                         textWarningError.setTextColor(Color.RED);
 
                         Toast.makeText(getApplicationContext(), "GET BACCKKKK!!!", Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        // location alright, now upload image
+                        Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(this, CameraUploadFirstImageActivity.class);
+                        intent.putExtra(Constants.RETURN_ACTIVITY, CameraUploadFirstImageActivity.class);
+                        startActivity(intent);
+
                     }
-
-                    Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
-
                 } else {
                     /// TODO handle error
                 }

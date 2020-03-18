@@ -58,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
 
-        user.updateProfile(profileUpdates)
+        Thread userDetailsUpdateThread = new Thread(() -> {
+            user.updateProfile(profileUpdates)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -67,7 +68,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+        });
 
+        userDetailsUpdateThread.start();
 
         Intent i = new Intent(this, LocationActivity.class);
         i.putExtra("user", new User(firstName, lastName, user.getPhoneNumber(), user.getEmail(), user.getUid()));

@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
 
     <application
         android:name=".SafeZoneApp"
@@ -18,7 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.LoginSignUpActivity"></activity>
+        <activity android:name=".activity.CameraUploadFirstImageActivity"></activity>
+        <activity android:name=".activity.LoginSignUpActivity" />
         <activity android:name=".activity.ConfirmObservationStatusActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.StartQuarantineActivity" />
@@ -57,6 +60,16 @@
                 <action android:name="${packageName}.alarm.action.trigger" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.track.safezone"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
     </application>
 
 </manifest>
