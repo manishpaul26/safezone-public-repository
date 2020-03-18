@@ -16,6 +16,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -331,6 +332,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             FetchPlaceRequest fetchPlaceRequest = FetchPlaceRequest.newInstance(String.valueOf(place.placeId), new ArrayList<>(Arrays.asList(Place.Field.LAT_LNG)));
             Task<FetchPlaceResponse> placeTask = placesClient.fetchPlace(fetchPlaceRequest);
 
+            hideSoftKeyboard();
+
             // This method should have been called off the main UI thread. Block and wait for at most
             // 60s for a result from the API.
 
@@ -370,6 +373,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         }
     };
 
+    private void hideSoftKeyboard() {
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
 
 
     private void moveCamera(LatLng latLng, float zoom, String title, boolean addMarker) {

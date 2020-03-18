@@ -27,6 +27,7 @@ public class LauncherLogoActvitity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher_logo_actvitity);
 
+        FirebaseAuth.getInstance().signOut();
     }
 
     @Override

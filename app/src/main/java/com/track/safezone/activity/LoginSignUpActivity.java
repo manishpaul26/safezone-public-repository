@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,9 +57,6 @@ public class LoginSignUpActivity extends AppCompatActivity implements
     private ViewGroup mPhoneNumberViews;
     private ViewGroup mSignedInViews;
 
-    private TextView mStatusText;
-    private TextView mDetailText;
-
     private EditText mPhoneNumberField;
     private EditText mVerificationField;
 
@@ -81,9 +78,6 @@ public class LoginSignUpActivity extends AppCompatActivity implements
         // Assign views
         mPhoneNumberViews = findViewById(R.id.phoneAuthFields);
         mSignedInViews = findViewById(R.id.signedInButtons);
-
-        mStatusText = findViewById(R.id.status);
-        mDetailText = findViewById(R.id.detail);
 
         mPhoneNumberField = findViewById(R.id.fieldPhoneNumber);
         mVerificationField = findViewById(R.id.fieldVerificationCode);
@@ -315,25 +309,26 @@ public class LoginSignUpActivity extends AppCompatActivity implements
                 // Initialized state, show only the phone number field and start button
                 enableViews(mStartButton, mPhoneNumberField);
                 disableViews(mVerifyButton, mResendButton, mVerificationField);
-                mDetailText.setText(null);
+
                 break;
             case STATE_CODE_SENT:
                 // Code sent state, show the verification field, the
                 enableViews(mVerifyButton, mResendButton, mPhoneNumberField, mVerificationField);
                 disableViews(mStartButton);
-                mDetailText.setText(R.string.status_code_sent);
+                Toast.makeText(this, R.string.status_code_sent, Toast.LENGTH_SHORT).show();
                 break;
             case STATE_VERIFY_FAILED:
                 // Verification has failed, show all options
                 enableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
                         mVerificationField);
-                mDetailText.setText(R.string.status_verification_failed);
+                Toast.makeText(this, R.string.status_verification_failed, Toast.LENGTH_SHORT).show();
                 break;
             case STATE_VERIFY_SUCCESS:
                 // Verification has succeeded, proceed to firebase sign in
                 disableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
                         mVerificationField);
-                mDetailText.setText(R.string.status_verification_succeeded);
+                Toast.makeText(this, R.string.status_verification_succeeded, Toast.LENGTH_SHORT).show();
+
 
                 // Set the verification text based on the credential
                 if (cred != null) {
@@ -347,7 +342,8 @@ public class LoginSignUpActivity extends AppCompatActivity implements
                 break;
             case STATE_SIGNIN_FAILED:
                 // No-op, handled by sign-in check
-                mDetailText.setText(R.string.status_sign_in_failed);
+                Toast.makeText(this, R.string.status_sign_in_failed, Toast.LENGTH_SHORT).show();
+
                 break;
             case STATE_SIGNIN_SUCCESS:
                 // Np-op, handled by sign-in check
@@ -359,7 +355,6 @@ public class LoginSignUpActivity extends AppCompatActivity implements
             mPhoneNumberViews.setVisibility(View.VISIBLE);
             mSignedInViews.setVisibility(View.GONE);
 
-            mStatusText.setText(R.string.signed_out);
         } else {
             // Signed in
             proceedToUserDetails();
@@ -370,9 +365,6 @@ public class LoginSignUpActivity extends AppCompatActivity implements
             enableViews(mPhoneNumberField, mVerificationField);
             mPhoneNumberField.setText(null);
             mVerificationField.setText(null);
-
-            mStatusText.setText(R.string.signed_in);
-            mDetailText.setText(getString(R.string.firebase_status_fmt, user.getUid()));
         }
     }
 
