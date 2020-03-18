@@ -1,5 +1,8 @@
 package com.track.safezone.activity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -24,6 +27,9 @@ public class StartQuarantineActivity extends AppCompatActivity {
 
     private SafeZoneDatabase database;
 
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,9 +37,9 @@ public class StartQuarantineActivity extends AppCompatActivity {
 
 
         this.database = FirebaseDB.getInstance();
-        Button startTrackingButton =  (Button) findViewById(R.id.button_start_tracking);
-        TextView observationStarted =  (TextView) findViewById(R.id.text_observation_started);
-        TextView observationLegalMsg =  (TextView) findViewById(R.id.textLegalDescription);
+        Button startTrackingButton = (Button) findViewById(R.id.button_start_tracking);
+        TextView observationStarted = (TextView) findViewById(R.id.text_observation_started);
+        TextView observationLegalMsg = (TextView) findViewById(R.id.textLegalDescription);
 
         startTrackingButton.setOnClickListener(view -> {
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -46,6 +52,48 @@ public class StartQuarantineActivity extends AppCompatActivity {
 
             ViewHelper.hideViews(startTrackingButton, observationLegalMsg);
             ViewHelper.showViews(observationStarted);
+
+//            alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//            final BroadcastReceiver receiver = new AlarmReceiver();
+//            final IntentFilter intentFilter = new IntentFilter("ALARM_RECEIVER_INTENT_TRIGGER");
+//            getApplicationContext().registerReceiver(receiver, intentFilter);
+//            Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+//            intent.setClass(getApplicationContext(), AlarmReceiver.class);
+//            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+//
+//
+//            // TODO FIX ALARMS!
+//            // Set the alarm to start at approximately 2:00 p.m.
+//            Calendar calendar = Calendar.getInstance();
+//            //calendar.setTimeInMillis(System.currentTimeMillis());
+//
+//            calendar.set(Calendar.AM_PM, Calendar.PM);
+//            calendar.set(Calendar.HOUR_OF_DAY, 10);
+//            calendar.set(Calendar.MINUTE, 56);
+//
+//            // With setInexactRepeating(), you have to use one of the AlarmManager interval
+//            // constants--in this case, AlarmManager.INTERVAL_DAY.
+//            alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+//
+//
+//            final PendingIntent operation = PendingIntent.getBroadcast(
+//                    this,
+//                    1,
+//                    intent,
+//                    PendingIntent.FLAG_CANCEL_CURRENT);
+//
+//
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), operation);
+//            }  else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                    alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), operation);
+//            } else {
+//                alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+//            }
+
+
+            Intent i = new Intent(getApplicationContext(), ConfirmObservationStatusActivity.class);
+            startActivity(i);
         });
     }
 }

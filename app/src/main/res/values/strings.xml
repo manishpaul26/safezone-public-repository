@@ -34,8 +34,6 @@
     <string name="button_start_tracking_text">Start Tracking</string>
 
 
-
-
     <!-- firebase -->
     <string name="desc_firebase_lockup">Firebase logo and name</string>
     <string name="phone_title_text">Phone Number</string>
@@ -54,5 +52,7 @@
     <string name="firebase_status_fmt">Firebase UID: %s</string>
     <string name="hint_verification_code">Verification Code</string>
     <string name="text_observation_started_message">Observation In Progress</string>
+    <string name="button_confirm_observation">Confirm Presence</string>
+    <string name="text_observation_warning_error">You seem to be out of your quarantine location!</string>
 
 </resources>
