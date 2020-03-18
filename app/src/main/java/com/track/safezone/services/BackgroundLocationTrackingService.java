@@ -15,7 +15,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.track.safezone.R;
-import com.track.safezone.activity.MainActivity;
+import com.track.safezone.activity.ConfirmObservationStatusActivity;
 
 public class BackgroundLocationTrackingService extends Service {
 
@@ -43,8 +43,12 @@ public class BackgroundLocationTrackingService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+
+
     private void startForeground() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+
+        Log.d(TAG, "startForeground: Inside foreground service creating notificiaton");
+        Intent notificationIntent = new Intent(this, ConfirmObservationStatusActivity.class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
@@ -70,10 +74,14 @@ public class BackgroundLocationTrackingService extends Service {
                 .build();
 
         startForeground(NOTIF_ID, notification);
+
+        Log.d(TAG, "startForeground: Finishing off startForegroudn notification creation");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private NotificationCompat.Builder createNotificationForNewVersions() {
+
+        Log.d(TAG, "createNotificationForNewVersions: Building notification");
 
         CharSequence name = getString(R.string.channel_name_sticky_tracking);
         String description = getString(R.string.channel_description_sticky_tracking);

@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.LauncherLogoActvitity"></activity>
+        <activity android:name=".activity.LoginSignUpActivity"></activity>
         <activity android:name=".activity.ConfirmObservationStatusActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.StartQuarantineActivity" />
@@ -44,7 +44,7 @@
         <activity
             android:name=".activity.LocationActivity"
             android:label="@string/title_activity_location" />
-        <activity android:name=".activity.LoginSignUpActivity">
+        <activity android:name=".activity.LauncherLogoActvitity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

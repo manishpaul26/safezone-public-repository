@@ -30,7 +30,7 @@
 
     <string name="channel_name_sticky_tracking">Sticky Location For Trascking</string>
     <string name="channel_description_sticky_tracking">Description location tracking</string>
-    <string name="quarantine_legal_message">You are about to start quarantine activity. You will be monitored for 14 days once you start this. This can not be undone.</string>
+    <string name="text_quarantine_legal_message">You are about to start quarantine activity. You will be monitored for 14 days once you start this. This can not be undone.</string>
     <string name="button_start_tracking_text">Start Tracking</string>
 
 
@@ -54,5 +54,6 @@
     <string name="text_observation_started_message">Observation In Progress</string>
     <string name="button_confirm_observation">Confirm Presence</string>
     <string name="text_observation_warning_error">You seem to be out of your quarantine location!</string>
+    <string name="text_observation_user_confirm_message">Please confirm your location</string>
 
 </resources>

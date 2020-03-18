@@ -18,5 +18,7 @@ public interface SafeZoneDatabase {
 
     void startQuarantineActivity(Date date);
 
+    boolean getQuarantineActivityStatus();
+
     LatLng getLocationData(Context applicationContext);
 }

@@ -25,11 +25,15 @@ public class FirebaseDB implements SafeZoneDatabase {
 
     private static FirebaseDB firebase;
     private static CollectionReference collection;
+    public static Map<String, Object> userData;
 
     private FirebaseDB() {
     }
 
+
     public static SafeZoneDatabase getInstance() {
+
+        Log.d(TAG, "getInstance: Inside Firebase : Initializing and getting User details");
 
         if (mDatabase == null || currentUser == null) {
             firebase = new FirebaseDB();
@@ -38,6 +42,22 @@ public class FirebaseDB implements SafeZoneDatabase {
             collection = mDatabase.collection("underobservation-users");
 
             currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (currentUser != null) {
+                Task<DocumentSnapshot> task = collection.document(currentUser.getUid()).get();
+
+                while (!task.isComplete()) {
+                    //Log.e(TAG, "getLocationData: Still runninggg");
+                }
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        userData = document.getData();
+                    }
+                }
+                ;
+            }
+
         }
         return firebase;
     }
@@ -50,7 +70,7 @@ public class FirebaseDB implements SafeZoneDatabase {
 
     @Override
     public void updatePhoneNumber(User user) {
-       // mDatabase.child("underobservation-users").child(user.getUserId()).child("phoneNumber").setValue(user.getPhoneNumber());
+        // mDatabase.child("underobservation-users").child(user.getUserId()).child("phoneNumber").setValue(user.getPhoneNumber());
     }
 
     @Override
@@ -61,6 +81,11 @@ public class FirebaseDB implements SafeZoneDatabase {
     @Override
     public void startQuarantineActivity(Date date) {
         collection.document(currentUser.getUid()).update("observationStartTime", date);
+    }
+
+    @Override
+    public boolean getQuarantineActivityStatus() {
+        return userData.containsKey("observationStartTime");
     }
 
     @Override
@@ -87,6 +112,5 @@ public class FirebaseDB implements SafeZoneDatabase {
         return null;
 
     }
-
 
 }
