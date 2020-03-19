@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
 
+
         Thread userDetailsUpdateThread = new Thread(() -> {
             user.updateProfile(profileUpdates)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

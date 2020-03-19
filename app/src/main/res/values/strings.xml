@@ -51,12 +51,19 @@
     <string name="signed_in">Signed In</string>
     <string name="firebase_status_fmt">Firebase UID: %s</string>
     <string name="hint_verification_code">Verification Code</string>
-    <string name="text_observation_started_message">Observation In Progress</string>
-    <string name="button_confirm_observation">Confirm Presence</string>
-    <string name="text_observation_warning_error">You seem to be out of your quarantine location!</string>
-    <string name="text_observation_user_confirm_message">Please confirm your location</string>
-    <string name="checkBox_under_observation_15_days">You will be under observation for 15 days</string>
-    <string name="checkBox_upload_photo">You will be asked to upload your photo</string>
-    <string name="checkBox_keep_location_on">You will keep your GPS location on</string>
+    <string name="text_observation_started_message">You\'re all set! Please proceed to upload your first status.</string>
+    <string name="button_confirm_location">Confirm Location</string>
+    <string name="text_observation_warning_error">You seem to be out of your quarantine location! The government enforcement authorities have been informed.</string>
+    <string name="text_observation_user_confirm_message">Please confirm your location first.</string>
+    <string name="checkBox_under_observation_15_days">I will be under observation for 15 days</string>
+    <string name="checkBox_upload_photo">I will be asked to upload your photo</string>
+    <string name="checkBox_keep_location_on">I will keep your GPS location on</string>
+    <string name="button_open_camera">Open Camera</string>
+    <string name="title_activity_verification_done">VerificationDoneActivity</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="text_thank_you_verification">Thank you!</string>
+    <string name="checkBox_present_isolation_location">I am present at my isolation location</string>
 
 </resources>

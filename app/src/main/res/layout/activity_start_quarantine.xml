@@ -39,7 +39,6 @@
             android:id="@+id/checkBox_under_observation_15_days"
             android:layout_width="wrap_content"
             android:layout_marginTop="10dp"
-            android:height="20dp"
             android:textSize="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -61,6 +60,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/checkBox_keep_location_on" />
+        <CheckBox
+            android:id="@+id/checkBox_present_at_isolation_location"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="20dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/checkBox_present_isolation_location" />
 
 
     </LinearLayout>
@@ -73,27 +80,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/icon_tick_observation_conditions"
-            android:src="@drawable/ic_check"
-            android:visibility="invisible"
-            android:layout_gravity="center"
-            android:layout_width="300px"
-            android:layout_height="300px">
-
-        </ImageView>
-
-        <TextView
-            android:id="@+id/text_observation_started"
-            android:textSize="15dp"
-            android:layout_margin="20dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom"
-            android:inputType="textMultiLine"
-            android:visibility="invisible"
-            android:text="@string/text_observation_started_message"
-            android:layout_width="wrap_content" />
-
         <Button
             android:id="@+id/button_start_tracking"
             android:layout_width="wrap_content"
@@ -103,6 +89,7 @@
             android:visibility="invisible"
             android:textSize="25dp"
             android:ellipsize="middle"
+            android:background="@drawable/button_shape"
             android:text="@string/button_start_tracking_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

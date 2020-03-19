@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.track.safezone.R;
 import com.track.safezone.database.SafeZoneDatabase;
 import com.track.safezone.database.impl.FirebaseDB;
-import com.track.safezone.utils.ViewHelper;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -47,14 +45,14 @@ public class StartQuarantineActivity extends AppCompatActivity {
 
         this.database = FirebaseDB.getInstance();
         this.startTrackingButton = (Button) findViewById(R.id.button_start_tracking);
-        TextView observationStarted = (TextView) findViewById(R.id.text_observation_started);
+
         TextView observationLegalMsg = (TextView) findViewById(R.id.textLegalDescription);
 
 
         this.findAllCheckboxes();
         this.applyListenerOnAllCheckboxes();
 
-        ImageView tick = findViewById(R.id.icon_tick_observation_conditions);
+
 
 
         startTrackingButton.setOnClickListener(view -> {
@@ -73,7 +71,6 @@ public class StartQuarantineActivity extends AppCompatActivity {
                 Log.e(TAG, "onCreate: ", e);
             }
 
-            ViewHelper.showViews(observationStarted, tick);
 
 //            alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 //            final BroadcastReceiver receiver = new AlarmReceiver();
@@ -114,10 +111,12 @@ public class StartQuarantineActivity extends AppCompatActivity {
 //            }
 
 
-            Intent i = new Intent(getApplicationContext(), ConfirmObservationStatusActivity.class);
+            Intent i = new Intent(getApplicationContext(), ConfirmationScreenActivity.class);
             startActivity(i);
         });
     }
+
+
 
     private void findAllCheckboxes() {
         LinearLayout rootLinearLayout = (LinearLayout) findViewById(R.id.layout_content_upper);

@@ -3,6 +3,7 @@ package com.track.safezone.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.track.safezone.R;
+import com.track.safezone.utils.ViewHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +33,7 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
     private String currentPhotoPath;
     private ImageView retakeImageIcon;
     private ImageView confirmImageIcon;
+    private ImageView cameraPlaceholderIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
 
         retakeImageIcon = findViewById(R.id.button_retake_image);
         confirmImageIcon = findViewById(R.id.button_confirm_image);
+
+        cameraPlaceholderIcon = (ImageView) findViewById(R.id.image_camera_placeholder_icon);
 
         openCameraButton.setOnClickListener(v -> dispatchTakePictureIntent());
         retakeImageIcon.setOnClickListener(v -> dispatchTakePictureIntent());
@@ -63,14 +68,17 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
             imageView.setImageBitmap(imageBitmap);
 
             openCameraButton.setVisibility(View.INVISIBLE);
-            retakeImageIcon.setVisibility(View.VISIBLE);
-            confirmImageIcon.setVisibility(View.VISIBLE);
+            ViewHelper.showViews(retakeImageIcon, confirmImageIcon, cameraPlaceholderIcon);
         }
     }
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePictureIntent.putExtra("android.intent.extras.CAMERA_FACING", 1);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            takePictureIntent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+        } else {
+            takePictureIntent.putExtra("android.intent.extras.CAMERA_FACING", 1);
+        }
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;

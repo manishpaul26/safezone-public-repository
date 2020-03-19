@@ -1,5 +1,6 @@
 package com.track.safezone.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
 
 
     private static final String TAG = "ConfirmObservationStatu";
+    public static final double RADIUS = 0.000900;
 
     LocationTrack locationTrack;
     private SafeZoneDatabase database;
@@ -44,8 +46,8 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
                     double longitude = locationTrack.getLongitude();
                     double latitude = locationTrack.getLatitude();
 
-                    if (longitude > latLng.longitude + 0.000400 || longitude < longitude - 0.000400
-                            || latitude > latLng.latitude + 0.000400 || latitude < latLng.latitude - 0.000400) {
+                    if (longitude > latLng.longitude + RADIUS || longitude < longitude - RADIUS
+                            || latitude > latLng.latitude + RADIUS || latitude < latLng.latitude - RADIUS) {
 
                         TextView textConfirmMessage = findViewById(R.id.text_confirm_periodic_location);
                         TextView textWarningError = findViewById(R.id.text_warning_error_outside);
@@ -60,10 +62,17 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
                         // location alright, now upload image
                         Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
 
-                        Intent intent = new Intent(this, CameraUploadFirstImageActivity.class);
-                        intent.putExtra(Constants.RETURN_ACTIVITY, CameraUploadFirstImageActivity.class);
-                        startActivity(intent);
 
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                        alertDialogBuilder.setTitle("Upload Photo").setMessage("Please upload a clear photo of your face.");
+
+                        alertDialogBuilder.setPositiveButton("Okay", (dialog, which) -> {
+                            Intent intent = new Intent(this, CameraUploadFirstImageActivity.class);
+                            intent.putExtra(Constants.RETURN_ACTIVITY, VerificationDoneActivity.class);
+                            startActivity(intent);
+                        });
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
                     }
                 } else {
                     /// TODO handle error

@@ -4,8 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:orientation="vertical"
     tools:context=".activity.CameraUploadFirstImageActivity">
+
+
+    <ImageView
+        android:id="@+id/image_camera_placeholder_icon"
+        android:src="@drawable/ic_camera"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginLeft="30dp"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true" />
 
     <ImageView
         android:id="@+id/image_initial_upload"
@@ -51,8 +61,10 @@
         android:layout_below="@id/image_initial_upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAlignment="center"
         android:layout_marginTop="30dp"
         android:layout_centerInParent="true"
+        android:background="@drawable/button_shape"
         android:layout_weight="1"
-        android:text="TextView" />
+        android:text="@string/button_open_camera" />
 </RelativeLayout>

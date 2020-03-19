@@ -62,6 +62,7 @@
         android:layout_centerHorizontal="true"
         android:text="Confirm Location"
         android:id="@+id/button_confirm_location"
+        android:background="@drawable/button_shape"
         android:visibility="invisible"
         android:layout_marginTop="600dp" />
 
