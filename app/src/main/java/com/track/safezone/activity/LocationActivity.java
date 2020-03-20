@@ -245,7 +245,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         confirmButton.setOnClickListener(button -> {
             userData.setGpsLocation(userPlace);
-            database.updateUserLocation(userData);
+            userData.setIsolation();
+
+            database.updateUserLocationAndIsolationTime(userData);
             Intent intent = new Intent(this, CameraUploadFirstImageActivity.class);
             intent.putExtra(Constants.RETURN_ACTIVITY, StartQuarantineActivity.class);
             //intent.putExtra("user", userData);
@@ -253,7 +255,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             startActivity(intent);
 
         });
-
     }
 
     private void searchGeoLocation() {

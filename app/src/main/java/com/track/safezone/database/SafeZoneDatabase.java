@@ -14,7 +14,7 @@ public interface SafeZoneDatabase {
 
     void updatePhoneNumber(User user);
 
-    void updateUserLocation(User user);
+    void updateUserLocationAndIsolationTime(User user);
 
     void startQuarantineActivity(Date date);
 

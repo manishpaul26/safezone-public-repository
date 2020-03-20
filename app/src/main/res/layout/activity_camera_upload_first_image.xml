@@ -8,6 +8,13 @@
     tools:context=".activity.CameraUploadFirstImageActivity">
 
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textSize="30dp"
+        android:layout_centerHorizontal="true"
+        android:text="Please upload your selfie"/>
     <ImageView
         android:id="@+id/image_camera_placeholder_icon"
         android:src="@drawable/ic_camera"

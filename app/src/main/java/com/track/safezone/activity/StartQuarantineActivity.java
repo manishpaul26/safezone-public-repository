@@ -63,7 +63,7 @@ public class StartQuarantineActivity extends AppCompatActivity {
 
             startTrackingButton.setEnabled(false);
 
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            DateFormat dateFormat = new SimpleDateFormat(Constants.TIME_FORMAT);
             Date date = new Date();
             try {
                 database.startQuarantineActivity(dateFormat.parse(dateFormat.format(date)));

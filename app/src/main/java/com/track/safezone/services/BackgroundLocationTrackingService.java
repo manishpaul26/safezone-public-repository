@@ -40,6 +40,27 @@ public class BackgroundLocationTrackingService extends Service {
 
         startForeground();
 
+        Thread t = new Thread() {
+
+            int count = 0;
+            public void run() {
+                Log.i(TAG, "QUEEEEEN: Running");
+
+                while (count <10) {
+                    try {
+                        Log.e(TAG, "run: SREEEEJAAA");
+                        Thread.sleep(2000);
+                    } catch (Exception e) {
+                        Log.e(TAG, "run: QUEEEEEN Caught!", e);
+                    }
+                    count++;
+                }
+
+            }
+        };
+        t.start();
+
+
         return super.onStartCommand(intent, flags, startId);
     }
 

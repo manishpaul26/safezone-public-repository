@@ -13,7 +13,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.track.safezone.beans.User;
 import com.track.safezone.database.SafeZoneDatabase;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FirebaseDB implements SafeZoneDatabase {
@@ -74,13 +76,21 @@ public class FirebaseDB implements SafeZoneDatabase {
     }
 
     @Override
-    public void updateUserLocation(User user) {
+    public void updateUserLocationAndIsolationTime(User user) {
         collection.document(user.getUserId()).set(user);
     }
 
     @Override
     public void startQuarantineActivity(Date date) {
-        collection.document(currentUser.getUid()).update("observationStartTime", date);
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, 14);
+
+        Map<String, Object> update = new HashMap<>(2);
+        update.put("observationStartTime", date);
+        update.put("isUnderIsolation", true);
+        update.put("underIsolationTill", c.getTime());
+        collection.document(currentUser.getUid()).update(update);
     }
 
     @Override
