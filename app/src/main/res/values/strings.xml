@@ -54,10 +54,10 @@
     <string name="text_observation_started_message">You\'re all set! Please proceed to upload your first status.</string>
     <string name="button_confirm_location">Confirm Location</string>
     <string name="text_observation_warning_error">You seem to be out of your quarantine location! The government enforcement authorities have been informed.</string>
-    <string name="text_observation_user_confirm_message">Please confirm your location first.</string>
+    <string name="text_observation_user_confirm_message">Please confirm that you are at your isolation location.</string>
     <string name="checkBox_under_observation_15_days">I will be under observation for 15 days</string>
-    <string name="checkBox_upload_photo">I will be asked to upload your photo</string>
-    <string name="checkBox_keep_location_on">I will keep your GPS location on</string>
+    <string name="checkBox_upload_photo">I will be asked to upload my photo at random intervals</string>
+    <string name="checkBox_keep_location_on">I will keep my GPS location on</string>
     <string name="button_open_camera">Open Camera</string>
     <string name="title_activity_verification_done">VerificationDoneActivity</string>
 

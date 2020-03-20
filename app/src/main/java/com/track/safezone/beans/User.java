@@ -1,10 +1,20 @@
 package com.track.safezone.beans;
 
+import android.util.Log;
+
 import com.google.android.libraries.places.api.model.Place;
+import com.track.safezone.activity.Constants;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class User implements Serializable {
+
+    private static final String TAG = "SafeZone User";
 
     private String firstName;
 
@@ -13,6 +23,13 @@ public class User implements Serializable {
     private String phoneNumber;
 
     private String emailAddress;
+
+    private boolean isUnderIsolation;
+
+    private Date isolationStartTime;
+
+    private Date isolationEndTime;
+
 
     private Place gpsLocation;
     private String userId;
@@ -52,4 +69,24 @@ public class User implements Serializable {
     public String getUserId() {
         return this.userId;
     }
+
+    public void setIsolation() {
+
+        DateFormat dateFormat = new SimpleDateFormat(Constants.TIME_FORMAT);
+        Date date = new Date();
+        try {
+            dateFormat.parse(dateFormat.format(date));
+            Calendar isolationEndTime = Calendar.getInstance();
+            isolationEndTime.add(Calendar.DAY_OF_MONTH, 14);
+
+            this.isUnderIsolation = true;
+            this.isolationStartTime = dateFormat.parse(dateFormat.format(date));
+            this.isolationEndTime = isolationEndTime.getTime();
+
+        } catch (ParseException e) {
+            Log.e(TAG, "setIsolation: ", e);
+        }
+
+    }
+
 }
