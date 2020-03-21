@@ -65,5 +65,10 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="text_thank_you_verification">Thank you!</string>
     <string name="checkBox_present_isolation_location">I am present at my isolation location</string>
+    <string name="dependent_details_text"> Please Enter Dependent Details </string>
+    <string name="dependent1_first_name_text">Dependent 1 Name : </string>
+    <string name="dependent2_first_name_text">Dependent 1 Phone Number : </string>
+    <string name="dependent1_phone_number_text">Dependent 2 Name : </string>
+    <string name="dependent2_phone_number_text">Dependent 2 Phone number : </string>
 
 </resources>

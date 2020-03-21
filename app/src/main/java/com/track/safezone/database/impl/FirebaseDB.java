@@ -123,4 +123,9 @@ public class FirebaseDB implements SafeZoneDatabase {
 
     }
 
+    @Override
+    public void updateLastObservationTime() {
+        collection.document(currentUser.getUid()).update("lastObservationTime", Calendar.getInstance().getTime());
+    }
+
 }

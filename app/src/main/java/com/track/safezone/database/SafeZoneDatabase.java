@@ -21,4 +21,6 @@ public interface SafeZoneDatabase {
     boolean getQuarantineActivityStatus();
 
     LatLng getLocationData(Context applicationContext);
+
+    void updateLastObservationTime();
 }

@@ -106,8 +106,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         this.database = FirebaseDB.getInstance();
 
+        String GOOGLE_MAPS_API_KEY = getResources().getString(R.string.google_maps_key);
         if (!Places.isInitialized()) {
-            Places.initialize(this, "AIzaSyDK02Q7uQ0WjVYaoCH4BZ6Xu_6QohuvyA0");
+            Places.initialize(this, GOOGLE_MAPS_API_KEY);
         }
 
         this.placesClient = Places.createClient(this);

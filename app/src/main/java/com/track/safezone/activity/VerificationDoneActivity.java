@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.track.safezone.R;
+import com.track.safezone.database.impl.FirebaseDB;
 import com.track.safezone.utils.ViewHelper;
 
 public class VerificationDoneActivity extends AppCompatActivity {
@@ -59,6 +60,8 @@ public class VerificationDoneActivity extends AppCompatActivity {
 
                         ViewHelper.hideViews(progressBar, verifiyingPhotoMsg);
                         ViewHelper.showViews(check, success);
+
+                        FirebaseDB.getInstance().updateLastObservationTime();
 
                     }
                     // your UI code here
