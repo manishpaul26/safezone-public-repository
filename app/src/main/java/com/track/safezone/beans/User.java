@@ -100,6 +100,10 @@ public class User implements Serializable {
         return dependentDetails;
     }
 
+    public void setDependentDetails(ArrayList<DependentDetails> dependentDetails) {
+        this.dependentDetails = dependentDetails;
+    }
+
     public static class UserBuilder
     {
         private final String firstName;
