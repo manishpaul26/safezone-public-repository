@@ -45,9 +45,13 @@ public class MainActivity extends AppCompatActivity {
 
         EditText mFirstName = (EditText) findViewById(R.id.input_firstName);
         EditText mLastName = (EditText) findViewById(R.id.input_lastName);
+        EditText mEmailAddress = findViewById(R.id.emailAddress);
 
         String firstName = mFirstName.getText().toString();
         String lastName = mLastName.getText().toString();
+        String emailAddress = mEmailAddress.getText().toString();
+
+        //emsil field read
 
         String name = firstName + " " + lastName;
 
@@ -73,9 +77,13 @@ public class MainActivity extends AppCompatActivity {
 
         userDetailsUpdateThread.start();
 
-        Intent i = new Intent(this, LocationActivity.class);
-        i.putExtra("user", new User(firstName, lastName, user.getPhoneNumber(), user.getEmail(), user.getUid()));
+        Intent i = new Intent(this, DependentDetailsActivity.class);
+        i.putExtra("user", new User.UserBuilder(firstName, lastName).phone(user.getPhoneNumber()).address(emailAddress).build());
         startActivity(i);
+
+
+        // email
+        // New activity ->
 
     }
 }

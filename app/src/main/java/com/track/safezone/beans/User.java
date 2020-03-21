@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,17 +31,20 @@ public class User implements Serializable {
 
     private Date isolationEndTime;
 
+    private ArrayList<DependentDetails> dependentDetails;
+
 
     private Place gpsLocation;
     private String userId;
 
-    public User(String firstName, String secondName, String phoneNumber, String emailAddress, String userId) {
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.phoneNumber = phoneNumber;
-        this.emailAddress = emailAddress;
-        this.userId = userId;
+    private User(UserBuilder builder) {
+        this.firstName = builder.firstName;
+        this.secondName = builder.secondName;
+        this.phoneNumber = builder.phoneNumber;
+        this.emailAddress = builder.emailAddress;
+        this.dependentDetails = builder.dependentDetails;
     }
+
 
     public String getFirstName() {
         return firstName;
@@ -89,4 +93,45 @@ public class User implements Serializable {
 
     }
 
+    public ArrayList<DependentDetails> getDependentDetails() {
+        return dependentDetails;
+    }
+
+    public void setDependentDetails(ArrayList<DependentDetails> dependentDetails) {
+        this.dependentDetails = dependentDetails;
+    }
+
+    public static class UserBuilder
+    {
+        private final String firstName;
+        private final String secondName;
+        private String phoneNumber;
+        private String emailAddress;
+        private ArrayList<DependentDetails> dependentDetails;
+
+        public UserBuilder(String firstName, String secondName) {
+            this.firstName = firstName;
+            this.secondName = secondName;
+        }
+
+        public UserBuilder phone(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+        public UserBuilder address(String emailAddress) {
+            this.emailAddress = emailAddress;
+            return this;
+        }
+
+        public UserBuilder dependentDetails(ArrayList<DependentDetails> dependentDetails){
+            this.dependentDetails=dependentDetails;
+            return this;
+        }
+        //Return the finally consrcuted User object
+        public User build() {
+            User user =  new User(this);
+            return user;
+        }
+    }
 }
+
