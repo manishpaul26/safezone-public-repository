@@ -26,12 +26,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.DependentDetailsActivity"></activity>
+        <activity android:name=".activity.NavigationMainActivity"></activity>
+        <activity android:name=".activity.DependentDetailsActivity" />
         <activity android:name=".activity.VerificationDoneActivity" />
         <activity android:name=".activity.CameraUploadFirstImageActivity" />
         <activity android:name=".activity.LoginSignUpActivity" />
         <activity android:name=".activity.ConfirmObservationStatusActivity" />
-        <activity android:name=".activity.MainActivity" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.StartQuarantineActivity" />
 
         <service android:name=".services.BackgroundLocationTrackingService" />
