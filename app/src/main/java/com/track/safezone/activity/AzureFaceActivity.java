@@ -1,161 +1,101 @@
 package com.track.safezone.activity;
 
+// <snippet_imports>
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-
 import com.microsoft.projectoxford.face.FaceServiceClient;
+import com.microsoft.projectoxford.face.FaceServiceRestClient;
 import com.microsoft.projectoxford.face.contract.Face;
 import com.microsoft.projectoxford.face.contract.FaceRectangle;
 import com.microsoft.projectoxford.face.contract.VerifyResult;
 import com.track.safezone.R;
-import com.track.safezone.services.FaceClientService;
-import com.track.safezone.utils.ViewHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.UUID;
 
-public class CameraUploadFirstImageActivity extends AppCompatActivity {
+// </snippet_imports>
+// <snippet_face_imports>
+// </snippet_face_imports>
 
-    private static final String TAG = "CameraUploadFirstImageA";
+public class AzureFaceActivity extends Activity {
 
-    private Button openCameraButton;
-    private ImageView imageView;
-    private final int REQUEST_IMAGE_CAPTURE = 1;
-    private String currentPhotoPath;
-    private ImageView retakeImageIcon;
-    private ImageView confirmImageIcon;
-    private ImageView cameraPlaceholderIcon;
+    private static final String TAG = "AzureFaceActivity";
+    // <snippet_mainactivity_fields>
+    // Add your Face endpoint to your environment variables.
+    private final String apiEndpoint = "https://safezone-app.cognitiveservices.azure.com/face/v1.0";
+    // Add your Face subscription key to your environment variables.
+    private final String subscriptionKey = "d42f464dbac14bbd82e5ea6f85ad07d3";
 
+    private final FaceServiceClient faceServiceClient =
+            new FaceServiceRestClient(apiEndpoint, subscriptionKey);
+
+    private final int PICK_IMAGE = 1;
     private ProgressDialog detectionProgressDialog;
 
-    private final FaceServiceClient faceServiceClient = FaceClientService.getFaceServiceClient();
-
-    // TODO NO use
     private UUID faceID_1;
+    // </snippet_mainactivity_fields>
 
+    // <snippet_mainactivity_methods>
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_camera_upload_first_image);
-
-        Bundle bundle = getIntent().getExtras();
-        Class clazz = (Class) bundle.get(Constants.RETURN_ACTIVITY);
-
-        openCameraButton =  findViewById(R.id.button_upload_image);
-        imageView = findViewById(R.id.image_initial_upload);
-
-        retakeImageIcon = findViewById(R.id.button_retake_image);
-        confirmImageIcon = findViewById(R.id.button_confirm_image);
-
-        cameraPlaceholderIcon = (ImageView) findViewById(R.id.image_camera_placeholder_icon);
+        setContentView(R.layout.activity_azure_face_activity);
+        Button button1 = findViewById(R.id.button1);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(Intent.createChooser(
+                        intent, "Select Picture"), PICK_IMAGE);
+            }
+        });
 
         detectionProgressDialog = new ProgressDialog(this);
-
-        openCameraButton.setOnClickListener(v -> dispatchTakePictureIntent());
-        retakeImageIcon.setOnClickListener(v -> dispatchTakePictureIntent());
-        confirmImageIcon.setOnClickListener(v -> proceedToStartObservationActivity(clazz));
-
-
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(imageBitmap);
-
-            detectAndFrame(imageBitmap);
-
-            openCameraButton.setVisibility(View.INVISIBLE);
-            ViewHelper.showViews(retakeImageIcon, confirmImageIcon, cameraPlaceholderIcon);
-        }
-    }
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            takePictureIntent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
-        } else {
-            takePictureIntent.putExtra("android.intent.extras.CAMERA_FACING", 1);
-        }
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK &&
+                data != null && data.getData() != null) {
+            Uri uri = data.getData();
             try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                Log.e(TAG, "dispatchTakePictureIntent: ", ex);
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.track.safezone",
-                        photoFile);
-                //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(
+                        getContentResolver(), uri);
+                ImageView imageView = findViewById(R.id.imageView1);
+                imageView.setImageBitmap(bitmap);
+                int height = imageView.getMeasuredHeight();
+                int width = imageView.getMeasuredWidth();
+
+                // Comment out for tutorial
+                detectAndFrame(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+        // </snippet_mainactivity_methods>
     }
-
-
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-
-        return image;
-    }
-
-
-
-    private void proceedToStartObservationActivity(Class clazz) {
-
-        clazz = clazz == null ? StartQuarantineActivity.class : clazz;
-        Intent intent = new Intent(this, clazz);
-        startActivity(intent);
-    }
-
-
 
     // <snippet_detection_methods>
     // Detect faces by uploading a face image.
@@ -185,24 +125,6 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
                                         FaceServiceClient.FaceAttributeType.Gender }
                                     */
                             );
-
-                            SharedPreferences sharedPreferences = getSharedPreferences("com.track.safezone.photopaths", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                            if (result.length > 0 ) {
-                                if (sharedPreferences.contains("leastSignificantBits_1")) {
-                                    editor.putLong("leastSignificantBits_2", result[0].faceId.getLeastSignificantBits());
-                                    editor.putLong("mostSignificantBits_2", result[0].faceId.getMostSignificantBits());
-
-                                    Log.i(TAG, "CAMERAAAAAA doInBackground: CAMERAAA  second image LSB: " + result[0].faceId.getLeastSignificantBits() + " IMAGE STRING:" + result[0].faceId.toString());
-                                } else {
-                                    editor.putLong("leastSignificantBits_1", result[0].faceId.getLeastSignificantBits());
-                                    editor.putLong("mostSignificantBits_1", result[0].faceId.getMostSignificantBits());
-
-                                    Log.i(TAG, "CAMERAAAAAA doInBackground: CAMERAAA  ORIGINAL image LSB: " + result[0].faceId.getLeastSignificantBits() + " IMAGE STRING:" + result[0].faceId.toString());
-                                }
-                                editor.commit();
-                            }
 
                             if (faceID_1 != null) {
                                 VerifyResult verification = faceServiceClient.verify(faceID_1, result[0].faceId);
@@ -253,7 +175,7 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
                         }
                         if (result == null) return;
 
-                        ImageView imageView = findViewById(R.id.image_initial_upload);
+                        ImageView imageView = findViewById(R.id.imageView1);
                         imageView.setImageBitmap(
                                 drawFaceRectanglesOnBitmap(imageBitmap, result));
                         imageBitmap.recycle();
@@ -297,4 +219,5 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
         }
         return bitmap;
     }
+    // </snippet_drawrectangles>
 }

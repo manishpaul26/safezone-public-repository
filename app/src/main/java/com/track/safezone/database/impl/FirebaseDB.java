@@ -77,7 +77,7 @@ public class FirebaseDB implements SafeZoneDatabase {
 
     @Override
     public void updateUserLocationAndIsolationTime(User user) {
-        collection.document(user.getUserId()).set(user);
+        collection.document(currentUser.getUid()).set(user);
     }
 
     @Override

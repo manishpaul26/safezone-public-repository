@@ -21,7 +21,7 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
 
 
     private static final String TAG = "ConfirmObservationStatu";
-    public static final double RADIUS = 0.000900;
+    public static final double RADIUS = 0.500900;
 
     LocationTrack locationTrack;
     private SafeZoneDatabase database;
