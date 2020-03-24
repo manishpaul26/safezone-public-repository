@@ -1,6 +1,7 @@
 package com.track.safezone.activity;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -41,7 +42,17 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
 
             if (locationTrack.canGetLocation()) {
 
+                ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setProgress(0);
+                progressDialog.setMessage("Fetching your location..");
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                progressDialog.setProgress(0);
+                progressDialog.setMax(100);
+                progressDialog.show();
                 LatLng latLng = database.getLocationData(getApplicationContext());
+                progressDialog.hide();
+                confirmPresenceButton.setEnabled(false);
+
                 if (latLng != null) {
                     double longitude = locationTrack.getLongitude();
                     double latitude = locationTrack.getLatitude();
@@ -55,8 +66,8 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
                         textConfirmMessage.setVisibility(View.INVISIBLE);
                         textWarningError.setVisibility(View.VISIBLE);
                         textWarningError.setTextColor(Color.RED);
-
-                        Toast.makeText(getApplicationContext(), "GET BACCKKKK!!!", Toast.LENGTH_SHORT).show();
+                        FirebaseDB.getInstance().updatePersonOutsideQuarantine();
+                        Toast.makeText(getApplicationContext(), "Please go back to your isolation location.", Toast.LENGTH_SHORT).show();
                     } else {
 
                         // location alright, now upload image

@@ -41,7 +41,7 @@
     <string name="hint_phone_number">Phone Number</string>
     <string name="start_phone_auth">Send OTP</string>
     <string name="verify_phone_auth">Verify</string>
-    <string name="resend_phone_auth">Resend</string>
+    <string name="resend_phone_auth"><u>Resend Code</u></string>
     <string name="sign_out">Sign Out</string>
     <string name="status_code_sent">Code Sent</string>
     <string name="status_verification_failed">Verification failed</string>
@@ -66,9 +66,9 @@
     <string name="text_thank_you_verification">Thank you!</string>
     <string name="checkBox_present_isolation_location">I am present at my isolation location</string>
     <string name="emergency_details_text"> Please Enter Emergency Contact Details </string>
-    <string name="emergency1_first_name_text">Person 1 Name : </string>
+    <string name="emergency1_first_name_text">Name : </string>
     <string name="emergency2_first_name_text">Person 1 Phone Number : </string>
-    <string name="emergency1_phone_number_text">Person 2 Name : </string>
+    <string name="emergency1_phone_number_text">Phone Number : </string>
     <string name="emergency2_phone_number_text">Person 2 Phone number : </string>
 
 </resources>

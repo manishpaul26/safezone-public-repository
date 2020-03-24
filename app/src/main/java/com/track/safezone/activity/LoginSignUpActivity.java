@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 import static com.track.safezone.utils.ViewHelper.disableViews;
 import static com.track.safezone.utils.ViewHelper.enableViews;
+import static com.track.safezone.utils.ViewHelper.hideViews;
+import static com.track.safezone.utils.ViewHelper.showViews;
 
 public class LoginSignUpActivity extends AppCompatActivity implements
         View.OnClickListener {
@@ -62,7 +65,7 @@ public class LoginSignUpActivity extends AppCompatActivity implements
 
     private Button mStartButton;
     private Button mVerifyButton;
-    private Button mResendButton;
+    private TextView mResendText;
     private Button mSignOutButton;
 
     @Override
@@ -84,19 +87,20 @@ public class LoginSignUpActivity extends AppCompatActivity implements
 
         mStartButton = findViewById(R.id.buttonStartVerification);
         mVerifyButton = findViewById(R.id.buttonVerifyPhone);
-        mResendButton = findViewById(R.id.buttonResend);
+        mResendText = findViewById(R.id.textResend);
         mSignOutButton = findViewById(R.id.signOutButton);
 
         // Assign click listeners
         mStartButton.setOnClickListener(this);
         mVerifyButton.setOnClickListener(this);
-        mResendButton.setOnClickListener(this);
+        mResendText.setOnClickListener(this);
         mSignOutButton.setOnClickListener(this);
 
         // [START initialize_auth]
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
+
 
         // Initialize phone auth callbacks
         // [START phone_auth_callbacks]
@@ -308,24 +312,28 @@ public class LoginSignUpActivity extends AppCompatActivity implements
             case STATE_INITIALIZED:
                 // Initialized state, show only the phone number field and start button
                 enableViews(mStartButton, mPhoneNumberField);
-                disableViews(mVerifyButton, mResendButton, mVerificationField);
+                disableViews(mVerifyButton, mResendText, mVerificationField);
 
                 break;
             case STATE_CODE_SENT:
                 // Code sent state, show the verification field, the
-                enableViews(mVerifyButton, mResendButton, mPhoneNumberField, mVerificationField);
+                enableViews(mVerifyButton, mResendText, mPhoneNumberField, mVerificationField);
                 disableViews(mStartButton);
+                hideViews(mStartButton);
+                showViews(mResendText, mVerifyButton);
                 Toast.makeText(this, R.string.status_code_sent, Toast.LENGTH_SHORT).show();
                 break;
             case STATE_VERIFY_FAILED:
                 // Verification has failed, show all options
-                enableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
+                enableViews(mStartButton, mVerifyButton, mResendText, mPhoneNumberField,
                         mVerificationField);
+                showViews(mStartButton);
+                hideViews(mResendText, mVerifyButton);
                 Toast.makeText(this, R.string.status_verification_failed, Toast.LENGTH_SHORT).show();
                 break;
             case STATE_VERIFY_SUCCESS:
                 // Verification has succeeded, proceed to firebase sign in
-                disableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
+                disableViews(mStartButton, mVerifyButton, mResendText, mPhoneNumberField,
                         mVerificationField);
                 Toast.makeText(this, R.string.status_verification_succeeded, Toast.LENGTH_SHORT).show();
 
@@ -398,7 +406,7 @@ public class LoginSignUpActivity extends AppCompatActivity implements
 
                 verifyPhoneNumberWithCode(mVerificationId, code);
                 break;
-            case R.id.buttonResend:
+            case R.id.textResend:
                 resendVerificationCode(mPhoneNumberField.getText().toString(), mResendToken);
                 break;
             case R.id.signOutButton:

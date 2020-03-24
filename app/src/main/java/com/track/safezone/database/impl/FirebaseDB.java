@@ -128,4 +128,16 @@ public class FirebaseDB implements SafeZoneDatabase {
         collection.document(currentUser.getUid()).update("lastObservationTime", Calendar.getInstance().getTime());
     }
 
+    @Override
+    public void updatePersonOutsideQuarantine() {
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, 14);
+
+        Map<String, Object> update = new HashMap<>(2);
+        update.put("detectedOutsideQuarantine", true);
+        update.put("detectedOutsideQuarantineTime", c.getTime());
+        collection.document(currentUser.getUid()).update(update);
+    }
+
 }

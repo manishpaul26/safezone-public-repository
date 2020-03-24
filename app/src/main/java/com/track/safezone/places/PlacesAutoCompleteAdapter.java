@@ -112,7 +112,7 @@ public class PlacesAutoCompleteAdapter extends ArrayAdapter<PlacesAutoCompleteAd
         FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
                 // Call either setLocationBias() OR setLocationRestriction().
                 //.setLocationBias(bounds)
-                .setCountry("IN")
+                .setCountries("IN", "AU")
                 //.setTypeFilter(TypeFilter.ADDRESS)
                 .setSessionToken(token)
                 .setQuery(constraint.toString())
@@ -135,7 +135,7 @@ public class PlacesAutoCompleteAdapter extends ArrayAdapter<PlacesAutoCompleteAd
             if (findAutocompletePredictionsResponse != null)
                 for (AutocompletePrediction prediction : findAutocompletePredictionsResponse.getAutocompletePredictions()) {
                     Log.i(TAG, prediction.getPlaceId());
-                    resultList.add(new PlaceAutocomplete(prediction.getPlaceId(), prediction.getPrimaryText(STYLE_NORMAL).toString(), prediction.getFullText(STYLE_BOLD).toString()));
+                    resultList.add(new PlaceAutocomplete(prediction.getPlaceId(), prediction.getPrimaryText(STYLE_BOLD).toString(), prediction.getSecondaryText(STYLE_BOLD).toString()));
                 }
 
             return resultList;
@@ -162,15 +162,19 @@ public class PlacesAutoCompleteAdapter extends ArrayAdapter<PlacesAutoCompleteAd
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = super.getView(position, convertView, parent);
 
+
         // Sets the primary and secondary text for a row.
         // Note that getPrimaryText() and getSecondaryText() return a CharSequence that may contain
         // styling based on the given CharacterStyle.
 
         PlaceAutocomplete item = getItem(position);
 
-        TextView textView1 = (TextView) row.findViewById(android.R.id.text1);
+        TextView textView1 = row.findViewById(android.R.id.text1);
+        TextView textView2 = row.findViewById(android.R.id.text2);
+        textView1.setText(item.area);
+        textView2.setText(item.address);
 
-        textView1.setText(item.address);
+
         return row;
     }
 

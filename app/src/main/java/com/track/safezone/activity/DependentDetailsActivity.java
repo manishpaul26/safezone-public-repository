@@ -26,15 +26,12 @@ public class DependentDetailsActivity extends AppCompatActivity {
     public void proceedToLocation(View view) {
         EditText mDependentDetails1FirstName = findViewById(R.id.input_emergency1_firstName);
         EditText mDependentDetials1PhoneNumber = findViewById(R.id.input_emergency1_phoneNumber);
-        EditText mDependentDetials2FirstName = findViewById(R.id.input_emergency2_firstName);
-        EditText mDependentDetails2PhoneNumber = findViewById(R.id.input_emergency2_phoneNumber);
+
 
         DependentDetails emergencyDetails1 = new DependentDetails(mDependentDetails1FirstName.getText().toString(),mDependentDetials1PhoneNumber.getText().toString());
-        DependentDetails emergencyDetails2 = new DependentDetails(mDependentDetials2FirstName.getText().toString(),mDependentDetails2PhoneNumber.getText().toString());
 
         ArrayList<DependentDetails> emergencyDetails = new ArrayList<>();
         emergencyDetails.add(emergencyDetails1);
-        emergencyDetails.add(emergencyDetails2);
 
         Bundle extras = getIntent().getExtras();
         this.userData = (User) extras.get("user");

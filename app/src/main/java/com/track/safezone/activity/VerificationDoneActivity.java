@@ -125,7 +125,7 @@ public class VerificationDoneActivity extends AppCompatActivity {
             }
 
 
-            Log.d(TAG, "compareFaces: IM HEREEEEEE waiting to send to DB");
+            Log.d(TAG, "compareFaces: Updating last confirmed observation time.");
             if (result != null) {
                 // TODO add to DB
                 FirebaseDB.getInstance().updateLastObservationTime();

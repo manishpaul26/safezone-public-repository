@@ -23,4 +23,6 @@ public interface SafeZoneDatabase {
     LatLng getLocationData(Context applicationContext);
 
     void updateLastObservationTime();
+
+    void updatePersonOutsideQuarantine();
 }
