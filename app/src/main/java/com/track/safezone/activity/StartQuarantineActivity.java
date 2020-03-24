@@ -98,7 +98,7 @@ public class StartQuarantineActivity extends AppCompatActivity {
 
             calendar.set(Calendar.AM_PM, Calendar.PM);
             //calendar.set(Calendar.HOUR_OF_DAY, calendar.get);
-            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 3);
+            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 1);
 
             // With setInexactRepeating(), you have to use one of the AlarmManager interval
             // constants--in this case, AlarmManager.INTERVAL_DAY.

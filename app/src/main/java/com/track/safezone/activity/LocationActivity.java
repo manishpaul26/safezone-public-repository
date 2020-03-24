@@ -318,7 +318,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
                         userLocation = (Location) task.getResult();
                         if (userLocation == null) {
-                            throw new IllegalStateException("Location could not be retrieved properly");
+                            throw new NullPointerException("Location could not be retrieved properly");
                         }
                         moveCamera(new LatLng(userLocation.getLatitude(), userLocation.getLongitude()), 15f, "", false);
                     }
@@ -328,7 +328,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         } catch (SecurityException e) {
             Log.e(TAG, "ERRORRR!!!" + e);
-        } catch (IllegalStateException e) {
+        } catch (NullPointerException e) {
             Log.e(TAG, "getUserLocation: {}", e);
             if (numberOfTriesForLocation < 2) {
                 Log.e(TAG, "getUserLocation: Will try to get user location again.. {}", e);

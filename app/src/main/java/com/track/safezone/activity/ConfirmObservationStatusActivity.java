@@ -1,10 +1,10 @@
 package com.track.safezone.activity;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,7 +22,7 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
 
 
     private static final String TAG = "ConfirmObservationStatu";
-    public static final double RADIUS = 0.500900;
+    public static final double RADIUS = 0.00900;
 
     LocationTrack locationTrack;
     private SafeZoneDatabase database;
@@ -42,22 +42,15 @@ public class ConfirmObservationStatusActivity extends AppCompatActivity {
 
             if (locationTrack.canGetLocation()) {
 
-                ProgressDialog progressDialog = new ProgressDialog(this);
-                progressDialog.setProgress(0);
-                progressDialog.setMessage("Fetching your location..");
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressDialog.setProgress(0);
-                progressDialog.setMax(100);
-                progressDialog.show();
                 LatLng latLng = database.getLocationData(getApplicationContext());
-                progressDialog.hide();
-                confirmPresenceButton.setEnabled(false);
 
                 if (latLng != null) {
                     double longitude = locationTrack.getLongitude();
                     double latitude = locationTrack.getLatitude();
 
-                    if (longitude > latLng.longitude + RADIUS || longitude < longitude - RADIUS
+                    Log.d(TAG, "onCreate: Original Latitude: " + latLng.latitude + " longitude: " +
+                            latLng.longitude + ". Current Location Latitude " + latitude + " longitude: " + longitude);
+                    if (longitude > latLng.longitude + RADIUS || longitude < latLng.longitude - RADIUS
                             || latitude > latLng.latitude + RADIUS || latitude < latLng.latitude - RADIUS) {
 
                         TextView textConfirmMessage = findViewById(R.id.text_confirm_periodic_location);

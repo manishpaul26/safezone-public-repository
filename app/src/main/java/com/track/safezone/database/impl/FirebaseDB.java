@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.track.safezone.beans.User;
 import com.track.safezone.database.SafeZoneDatabase;
 
@@ -40,6 +41,9 @@ public class FirebaseDB implements SafeZoneDatabase {
         if (mDatabase == null || currentUser == null) {
             firebase = new FirebaseDB();
             mDatabase = FirebaseFirestore.getInstance();
+            mDatabase.setFirestoreSettings(new FirebaseFirestoreSettings.Builder()
+                    .setPersistenceEnabled(false)
+                    .build());
 
             collection = mDatabase.collection("underobservation-users");
 
