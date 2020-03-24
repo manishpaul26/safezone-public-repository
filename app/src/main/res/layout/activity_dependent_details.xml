@@ -8,10 +8,10 @@
     tools:context=".activity.DependentDetailsActivity">
 
     <TextView
-        android:id="@+id/dependentDetialsMessage"
+        android:id="@+id/emergencyDetialsMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/dependent_details_text"
+        android:text="@string/emergency_details_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -20,11 +20,11 @@
 
 
     <TextView
-        android:id="@+id/dependent1firstNameText"
+        android:id="@+id/emergency1firstNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="148dp"
-        android:text="@string/dependent1_first_name_text"
+        android:text="@string/emergency1_first_name_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.226"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -33,7 +33,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:id="@+id/input_dependent1_firstName"
+        android:id="@+id/input_emergency1_firstName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="188dp"
@@ -45,11 +45,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/dependent1PhoneNumberText"
+        android:id="@+id/emergency1PhoneNumberText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="148dp"
-        android:text="@string/dependent1_phone_number_text"
+        android:text="@string/emergency1_phone_number_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.233"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -58,7 +58,7 @@
         app:layout_constraintVertical_bias="0.368" />
 
     <EditText
-        android:id="@+id/input_dependent1_phoneNumber"
+        android:id="@+id/input_emergency1_phoneNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="292dp"
@@ -70,11 +70,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/dependent2firstNameText"
+        android:id="@+id/emergency2firstNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="148dp"
-        android:text="@string/dependent2_first_name_text"
+        android:text="@string/emergency2_first_name_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.283"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -83,7 +83,7 @@
         app:layout_constraintVertical_bias="0.195" />
 
     <EditText
-        android:id="@+id/input_dependent2_firstName"
+        android:id="@+id/input_emergency2_firstName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="388dp"
@@ -95,11 +95,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/dependent2PhoneNumberText"
+        android:id="@+id/emergency2PhoneNumberText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="148dp"
-        android:text="@string/dependent2_phone_number_text"
+        android:text="@string/emergency2_phone_number_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.289"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -108,7 +108,7 @@
         app:layout_constraintVertical_bias="0.533" />
 
     <EditText
-        android:id="@+id/input_dependent2_phoneNumber"
+        android:id="@+id/input_emergency2_phoneNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="480dp"
@@ -120,7 +120,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/dependentDetialsNextButton"
+        android:id="@+id/emergencyDetialsNextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"

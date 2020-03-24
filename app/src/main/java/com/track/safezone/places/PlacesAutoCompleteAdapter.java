@@ -122,7 +122,6 @@ public class PlacesAutoCompleteAdapter extends ArrayAdapter<PlacesAutoCompleteAd
         Task<FindAutocompletePredictionsResponse> autocompletePredictions = placesClient.findAutocompletePredictions(request);
 
 
-
         // This method should have been called off the main UI thread. Block and wait for at most
         // 60s for a result from the API.
         try {
@@ -170,10 +169,8 @@ public class PlacesAutoCompleteAdapter extends ArrayAdapter<PlacesAutoCompleteAd
         PlaceAutocomplete item = getItem(position);
 
         TextView textView1 = (TextView) row.findViewById(android.R.id.text1);
-        //TextView textView2 = (TextView) row.findViewById(android.R.id.text2);
-        textView1.setText(item.address);
-        //textView2.setText(item.area);
 
+        textView1.setText(item.address);
         return row;
     }
 

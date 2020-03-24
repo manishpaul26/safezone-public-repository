@@ -1,11 +1,11 @@
 package com.track.safezone.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.track.safezone.R;
 import com.track.safezone.beans.DependentDetails;
@@ -24,21 +24,21 @@ public class DependentDetailsActivity extends AppCompatActivity {
     }
 
     public void proceedToLocation(View view) {
-        EditText mDependentDetails1FirstName = findViewById(R.id.input_dependent1_firstName);
-        EditText mDependentDetials1PhoneNumber = findViewById(R.id.input_dependent1_phoneNumber);
-        EditText mDependentDetials2FirstName = findViewById(R.id.input_dependent2_firstName);
-        EditText mDependentDetails2PhoneNumber = findViewById(R.id.input_dependent2_phoneNumber);
+        EditText mDependentDetails1FirstName = findViewById(R.id.input_emergency1_firstName);
+        EditText mDependentDetials1PhoneNumber = findViewById(R.id.input_emergency1_phoneNumber);
+        EditText mDependentDetials2FirstName = findViewById(R.id.input_emergency2_firstName);
+        EditText mDependentDetails2PhoneNumber = findViewById(R.id.input_emergency2_phoneNumber);
 
-        DependentDetails dependentDetails1 = new DependentDetails(mDependentDetails1FirstName.getText().toString(),mDependentDetials1PhoneNumber.getText().toString());
-        DependentDetails dependentDetails2 = new DependentDetails(mDependentDetials2FirstName.getText().toString(),mDependentDetails2PhoneNumber.getText().toString());
+        DependentDetails emergencyDetails1 = new DependentDetails(mDependentDetails1FirstName.getText().toString(),mDependentDetials1PhoneNumber.getText().toString());
+        DependentDetails emergencyDetails2 = new DependentDetails(mDependentDetials2FirstName.getText().toString(),mDependentDetails2PhoneNumber.getText().toString());
 
-        ArrayList<DependentDetails> dependentDetails = new ArrayList<>();
-        dependentDetails.add(dependentDetails1);
-        dependentDetails.add(dependentDetails2);
+        ArrayList<DependentDetails> emergencyDetails = new ArrayList<>();
+        emergencyDetails.add(emergencyDetails1);
+        emergencyDetails.add(emergencyDetails2);
 
         Bundle extras = getIntent().getExtras();
         this.userData = (User) extras.get("user");
-        userData.setDependentDetails(dependentDetails);
+        userData.setDependentDetails(emergencyDetails);
 
         Intent i = new Intent(this, LocationActivity.class);
         i.putExtra("user", userData);

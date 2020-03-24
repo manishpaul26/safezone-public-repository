@@ -2,7 +2,11 @@ package com.track.safezone.activity;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,11 +20,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.track.safezone.R;
 import com.track.safezone.database.SafeZoneDatabase;
 import com.track.safezone.database.impl.FirebaseDB;
+import com.track.safezone.services.AlarmReceiver;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -72,43 +78,43 @@ public class StartQuarantineActivity extends AppCompatActivity {
             }
 
 
-//            alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//            final BroadcastReceiver receiver = new AlarmReceiver();
-//            final IntentFilter intentFilter = new IntentFilter("ALARM_RECEIVER_INTENT_TRIGGER");
-//            getApplicationContext().registerReceiver(receiver, intentFilter);
-//            Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-//            intent.setClass(getApplicationContext(), AlarmReceiver.class);
-//            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
-//
-//
-//            // TODO FIX ALARMS!
-//            // Set the alarm to start at approximately 2:00 p.m.
-//            Calendar calendar = Calendar.getInstance();
-//            //calendar.setTimeInMillis(System.currentTimeMillis());
-//
-//            calendar.set(Calendar.AM_PM, Calendar.PM);
-//            calendar.set(Calendar.HOUR_OF_DAY, 10);
-//            calendar.set(Calendar.MINUTE, 56);
-//
-//            // With setInexactRepeating(), you have to use one of the AlarmManager interval
-//            // constants--in this case, AlarmManager.INTERVAL_DAY.
-//            alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-//
-//
-//            final PendingIntent operation = PendingIntent.getBroadcast(
-//                    this,
-//                    1,
-//                    intent,
-//                    PendingIntent.FLAG_CANCEL_CURRENT);
-//
-//
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), operation);
-//            }  else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                    alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), operation);
-//            } else {
-//                alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-//            }
+            alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            final BroadcastReceiver receiver = new AlarmReceiver();
+            final IntentFilter intentFilter = new IntentFilter("ALARM_RECEIVER_INTENT_TRIGGER");
+            getApplicationContext().registerReceiver(receiver, intentFilter);
+
+
+
+            Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+            intent.setClass(getApplicationContext(), AlarmReceiver.class);
+            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+
+
+            // TODO FIX ALARMS!
+            // Set the alarm to start at approximately 2:00 p.m.
+            Calendar calendar = Calendar.getInstance();
+            //calendar.setTimeInMillis(System.currentTimeMillis());
+
+
+            calendar.set(Calendar.AM_PM, Calendar.PM);
+            //calendar.set(Calendar.HOUR_OF_DAY, calendar.get);
+            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 3);
+
+            // With setInexactRepeating(), you have to use one of the AlarmManager interval
+            // constants--in this case, AlarmManager.INTERVAL_DAY.
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+
+
+            Log.i(TAG, "onCreate: Alarm set for: " + new SimpleDateFormat(Constants.TIME_FORMAT).format(calendar.getTime()));
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+            }  else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+            } else {
+                alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+            }
 
 
             Intent i = new Intent(getApplicationContext(), ConfirmationScreenActivity.class);

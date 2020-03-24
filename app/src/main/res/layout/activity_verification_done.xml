@@ -33,7 +33,15 @@
         android:visibility="invisible"
         android:layout_centerInParent="true"
         android:layout_centerHorizontal="true" />
-
+    <ImageView
+        android:id="@+id/image_icon_tick_verification_failure"
+        android:src="@drawable/icon_warning"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginLeft="30dp"
+        android:visibility="invisible"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true" />
     <TextView
         android:gravity="center_vertical"
         android:id="@+id/text_thank_you"

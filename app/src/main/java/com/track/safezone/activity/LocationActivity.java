@@ -11,8 +11,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -41,26 +39,25 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.track.safezone.R;
+import com.track.safezone.adapters.LocationAutoCompleteAdapter;
 import com.track.safezone.beans.User;
 import com.track.safezone.database.SafeZoneDatabase;
 import com.track.safezone.database.impl.FirebaseDB;
+import com.track.safezone.listeners.OnPlaceSearchCompleteListener;
 import com.track.safezone.places.PlacesAutoCompleteAdapter;
 import com.track.safezone.utils.PermissionUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+
+import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener {
+        GoogleMap.OnMyLocationClickListener, OnPlaceSearchCompleteListener {
 
     private GoogleMap mMap;
 
@@ -91,6 +88,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private Place userPlace;
 
     private SafeZoneDatabase database;
+    private int numberOfTriesForLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,11 +162,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        getUserLocation();
 
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
@@ -177,10 +171,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
 
         enableMyLocation();
-        initializeSearchBar();
-
-        getUserLocation();
-
+        initializeViews();
 
 
     }
@@ -217,16 +208,19 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
     }
 
-    private void initializeSearchBar() {
+    private void initializeViews() {
         Log.d(TAG, "Initializing search bar");
 
 
+        //searchText field
         this.placesAutoCompleteAdapter =  new PlacesAutoCompleteAdapter(this, placesClient);
+        final AdapterView.OnItemClickListener locationAutoCompleteAdapter =
+                new LocationAutoCompleteAdapter(placesAutoCompleteAdapter, this, placesClient);
 
         searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE ||
+                if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == IME_ACTION_DONE ||
                         event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.KEYCODE_ENTER) {
                     searchGeoLocation();
                 }
@@ -235,8 +229,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         });
 
         searchText.setAdapter(placesAutoCompleteAdapter);
-        searchText.setOnItemClickListener(autoCompleteItemClickListener);
+        searchText.setOnItemClickListener(locationAutoCompleteAdapter);
 
+        // gps icon
         gpsIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,6 +239,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             }
         });
 
+
+        // confirm button
         confirmButton.setOnClickListener(button -> {
             userData.setGpsLocation(userPlace);
             userData.setIsolation();
@@ -306,77 +303,46 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private void getUserLocation() {
         FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+        numberOfTriesForLocation++;
+        Task fetchLocationTask  = fusedLocationProviderClient.getLastLocation();
+
         try {
-            Task location  = fusedLocationProviderClient.getLastLocation();
-            location.addOnCompleteListener(new OnCompleteListener() {
+
+            fetchLocationTask.addOnCompleteListener(new OnCompleteListener() {
 
                 @Override
                 public void onComplete(@NonNull Task task) {
 
                     if (task.isSuccessful()) {
                         Log.d(TAG, "onComplete: found location!!");
+
                         userLocation = (Location) task.getResult();
+                        if (userLocation == null) {
+                            throw new IllegalStateException("Location could not be retrieved properly");
+                        }
                         moveCamera(new LatLng(userLocation.getLatitude(), userLocation.getLongitude()), 15f, "", false);
                     }
                 }
+
             });
 
         } catch (SecurityException e) {
             Log.e(TAG, "ERRORRR!!!" + e);
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "getUserLocation: {}", e);
+            if (numberOfTriesForLocation < 2) {
+                Log.e(TAG, "getUserLocation: Will try to get user location again.. {}", e);
+            } else {
+                Log.e(TAG, "getUserLocation: Could not get user location {}", e);
+            }
         }
     }
 
-    private AdapterView.OnItemClickListener autoCompleteItemClickListener =  new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            PlacesAutoCompleteAdapter.PlaceAutocomplete place = placesAutoCompleteAdapter.getItem(position);
-
-            FetchPlaceRequest fetchPlaceRequest = FetchPlaceRequest.newInstance(String.valueOf(place.placeId), new ArrayList<>(Arrays.asList(Place.Field.LAT_LNG)));
-            Task<FetchPlaceResponse> placeTask = placesClient.fetchPlace(fetchPlaceRequest);
-
-            hideSoftKeyboard();
-
-            // This method should have been called off the main UI thread. Block and wait for at most
-            // 60s for a result from the API.
-
-
-            int numCores = Runtime.getRuntime().availableProcessors();
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(numCores * 2, numCores *2,
-                    60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-
-
-            placeTask.addOnCompleteListener(executor, new OnCompleteListener<FetchPlaceResponse>() {
-                @Override
-                public void onComplete(@NonNull Task<FetchPlaceResponse> task) {
-
-                    if (placeTask.isSuccessful()) {
-
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                FetchPlaceResponse result = placeTask.getResult();
-
-                                moveCamera(result.getPlace().getLatLng(), 15f, "Location", true);
-                                confirmButton.setVisibility(View.VISIBLE);
-                                userPlace = result.getPlace();
-
-                            }
-                            // your UI code here
-                        });
-
-                    } else {
-                        Toast.makeText(LocationActivity.this, "Oops, someeeething gonna get hurt real bad", Toast.LENGTH_SHORT).show();
-                    }
-                    // ...
-                }
-            });
-
-        }
-    };
 
     private void hideSoftKeyboard() {
+        this.searchText.onEditorAction(IME_ACTION_DONE);
+
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
@@ -391,10 +357,20 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     .title(title)
                     .draggable(true);
             mMap.addMarker(markerOptions);
-
-
         }
     }
 
 
+    @Override
+    public void onPlaceSearchSuccess(FetchPlaceResponse result) {
+        moveCamera(result.getPlace().getLatLng(), 15f, "Location", true);
+        confirmButton.setVisibility(View.VISIBLE);
+        userPlace = result.getPlace();
+        hideSoftKeyboard();
+    }
+
+    @Override
+    public void onPlaceSearchFailure() {
+        Toast.makeText(this, "Oops, something went wrong! Please try searching again.", Toast.LENGTH_SHORT).show();
+    }
 }

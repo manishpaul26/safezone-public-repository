@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import static com.track.safezone.activity.CameraUploadFirstImageActivity.CameraError.ErrorCodes.IMAGE_CAPTURED_INCORRECTLY;
+
 public class VerificationDoneActivity extends AppCompatActivity {
 
     private static final String TAG = "VerificationDoneActivit";
@@ -41,53 +43,9 @@ public class VerificationDoneActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verification_done);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar_verifying_photo);
-
-        //detectionProgressDialog = new ProgressDialog(this);
-
+        progressBar = findViewById(R.id.progressBar_verifying_photo);
 
         compareFaces();
-
-/*
-        // Start long running operation in a background thread
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                while (progressStatus < 100) {
-                    progressStatus += 1;
-                    // Update the progress bar and display the
-                    //current value in the text view
-                    handler.post(new Runnable() {
-                        public void run() {
-                            progressBar.setProgress(progressStatus);
-                        }
-                    });
-                    try {
-                        // Sleep for 200 milliseconds.
-                        Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        ViewHelper.hideViews(progressBar, verifiyingPhotoMsg);
-                        ViewHelper.showViews(check, success);
-
-                        FirebaseDB.getInstance().updateLastObservationTime();
-
-                    }
-                    // your UI code here
-                });
-
-
-            }
-        });
-        t.start();*/
-
 
     }
 
@@ -96,7 +54,6 @@ public class VerificationDoneActivity extends AppCompatActivity {
         AsyncTask<InputStream, String, VerifyResult> detectTask =
                 new AsyncTask<InputStream, String, VerifyResult>() {
                     String exceptionMessage = "";
-
 
                     VerifyResult verification;
 
@@ -107,6 +64,10 @@ public class VerificationDoneActivity extends AppCompatActivity {
                             FaceServiceClient faceServiceClient =  FaceClientService.getFaceServiceClient();
                             SharedPreferences sharedPreferences = getSharedPreferences("com.track.safezone.photopaths", MODE_PRIVATE);
 
+                            if (!sharedPreferences.contains("leastSignificantBits_1") || !sharedPreferences.contains("leastSignificantBits_2")) {
+                                exceptionMessage = "Sorry, something went wrong! " + IMAGE_CAPTURED_INCORRECTLY;
+                                return null;
+                            }
                             long image1LeastSignificantBits = sharedPreferences.getLong("leastSignificantBits_1", 0l);
                             long image1MostSignificantBits = sharedPreferences.getLong("mostSignificantBits_1", 0l);
                             long image2LeastSignificantBits = sharedPreferences.getLong("leastSignificantBits_2", 0l);
@@ -116,71 +77,51 @@ public class VerificationDoneActivity extends AppCompatActivity {
                             UUID original = new UUID(image1MostSignificantBits,image1LeastSignificantBits);
                             UUID retake = new UUID(image2MostSignificantBits, image2LeastSignificantBits);
 
-
-                            verification = faceServiceClient.verify(original, retake);
-                            if (verification.isIdentical) {
-                                Log.e(TAG, "doInBackground: " + "FAAAAD MASSSTT!!!" + verification.confidence );
-                                //Toast.makeText(AzureFaceActivity.this, "FAAAAD MASSSTT!!!" + verification.confidence, Toast.LENGTH_SHORT).show();
-                            } else {
-                                Log.e(TAG, "doInBackground: " + "LELE Confidenc!!!" + verification.confidence );
-
-                                //Toast.makeText(AzureFaceActivity.this, "LELE Confidence" + verification.confidence, Toast.LENGTH_SHORT).show();
-                            }
-                            if (verification == null){
-                                publishProgress(
-                                        "Detection Finished. Nothing detected");
-                                return null;
-                            }
                             publishProgress("100");
+                            return faceServiceClient.verify(original, retake);
+
                         } catch (Exception e) {
                             exceptionMessage = String.format(
                                     "Detection failed: %s", e.getMessage());
                             return null;
                         }
-                        return verification;
                     }
 
                     @Override
                     protected void onPreExecute() {
-                        //TODO: show progress dialog
                         progressBar.setProgress(0);
                     }
                     @Override
                     protected void onProgressUpdate(String... progress) {
-                        //TODO: update progress
                         progressBar.setProgress(50);
                     }
                     @Override
                     protected void onPostExecute(VerifyResult result) {
-                        //TODO: update face frames
-                        //detectionProgressDialog.dismiss();
-
-
                         if(!exceptionMessage.equals("")){
                             showError(exceptionMessage);
                         }
-                        if (verification == null) {
-                            showError("KUCH TOH GADBAD HAI!");
-                        };
                     }
                 };
 
         detectTask.execute();
         try {
             VerifyResult result = detectTask.get();
-            ImageView success = findViewById(R.id.image_icon_tick_verification_success);
-            TextView check = findViewById(R.id.text_thank_you);
-            TextView verifiyingPhotoMsg = findViewById(R.id.text_verifying_photo);
+            ImageView checkMark = findViewById(R.id.image_icon_tick_verification_success);
+            TextView resultText = findViewById(R.id.text_thank_you);
+            TextView verifyingPhotoMsg = findViewById(R.id.text_verifying_photo);
 
-            ViewHelper.hideViews(progressBar, verifiyingPhotoMsg);
+            ViewHelper.hideViews(progressBar, verifyingPhotoMsg);
 
             progressBar.setProgress(100);
-            if (result.isIdentical) {
-
-                ViewHelper.showViews(check, success);
+            if (result != null && result.isIdentical) {
+                Log.e(TAG, "doInBackground: " + "The face are identical. Confidence score:  " + result.confidence );
+                ViewHelper.showViews(resultText, checkMark);
             } else {
+                Log.e(TAG, "doInBackground: " + "Photos do not match : failed confidence" + result.confidence );
                 Toast.makeText(this, "Sorry, image verification failed!", Toast.LENGTH_SHORT).show();
-                success.setImageResource(R.drawable.icon_warning);
+                checkMark.setImageResource(0);
+                checkMark.setImageResource(R.drawable.icon_warning);
+                ViewHelper.showViews(checkMark);
             }
 
 

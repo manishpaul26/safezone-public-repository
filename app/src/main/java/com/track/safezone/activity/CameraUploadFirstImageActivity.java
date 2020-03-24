@@ -26,7 +26,6 @@ import androidx.core.content.FileProvider;
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.contract.Face;
 import com.microsoft.projectoxford.face.contract.FaceRectangle;
-import com.microsoft.projectoxford.face.contract.VerifyResult;
 import com.track.safezone.R;
 import com.track.safezone.services.FaceClientService;
 import com.track.safezone.utils.ViewHelper;
@@ -167,68 +166,53 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
         ByteArrayInputStream inputStream =
                 new ByteArrayInputStream(outputStream.toByteArray());
 
-        AsyncTask<InputStream, String, Face[]> detectTask =
-                new AsyncTask<InputStream, String, Face[]>() {
-                    String exceptionMessage = "";
+        AsyncTask<InputStream, String, Face> detectTask =
+                new AsyncTask<InputStream, String, Face>() {
+                    CameraError cameraError = null;
 
                     @Override
-                    protected Face[] doInBackground(InputStream... params) {
+                    protected Face doInBackground(InputStream... params) {
                         try {
+                            Face face = null;
                             publishProgress("Detecting...");
                             Face[] result = faceServiceClient.detect(
                                     params[0],
                                     true,         // returnFaceId
                                     false,        // returnFaceLandmarks
                                     null          // returnFaceAttributes:
-                                    /* new FaceServiceClient.FaceAttributeType[] {
-                                        FaceServiceClient.FaceAttributeType.Age,
-                                        FaceServiceClient.FaceAttributeType.Gender }
-                                    */
                             );
 
                             SharedPreferences sharedPreferences = getSharedPreferences("com.track.safezone.photopaths", MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                            if (result.length > 0 ) {
-                                if (sharedPreferences.contains("leastSignificantBits_1")) {
-                                    editor.putLong("leastSignificantBits_2", result[0].faceId.getLeastSignificantBits());
-                                    editor.putLong("mostSignificantBits_2", result[0].faceId.getMostSignificantBits());
+                            if (result != null && result.length > 0) {
+                                if (result.length == 1) {
+                                    face = result[0];
+                                    if (sharedPreferences.contains("leastSignificantBits_1")) {
+                                        editor.putLong("leastSignificantBits_2", face.faceId.getLeastSignificantBits());
+                                        editor.putLong("mostSignificantBits_2", face.faceId.getMostSignificantBits());
 
-                                    Log.i(TAG, "CAMERAAAAAA doInBackground: CAMERAAA  second image LSB: " + result[0].faceId.getLeastSignificantBits() + " IMAGE STRING:" + result[0].faceId.toString());
+                                        Log.i(TAG, "CAMERAAAAAA doInBackground: CAMERAAA  second image LSB: " + result[0].faceId.getLeastSignificantBits() + " IMAGE STRING:" + result[0].faceId.toString());
+                                    } else {
+                                        editor.putLong("leastSignificantBits_1", face.faceId.getLeastSignificantBits());
+                                        editor.putLong("mostSignificantBits_1", face.faceId.getMostSignificantBits());
+
+                                        Log.i(TAG, "CAMERAAAAAA doInBackground: CAMERAAA  ORIGINAL image LSB: " + result[0].faceId.getLeastSignificantBits() + " IMAGE STRING:" + result[0].faceId.toString());
+                                    }
+                                    editor.commit();
                                 } else {
-                                    editor.putLong("leastSignificantBits_1", result[0].faceId.getLeastSignificantBits());
-                                    editor.putLong("mostSignificantBits_1", result[0].faceId.getMostSignificantBits());
-
-                                    Log.i(TAG, "CAMERAAAAAA doInBackground: CAMERAAA  ORIGINAL image LSB: " + result[0].faceId.getLeastSignificantBits() + " IMAGE STRING:" + result[0].faceId.toString());
+                                    cameraError = new CameraError("More than one face detected. Please ensure that no one is around you while clicking the photo", CameraError.ErrorCodes.IMAGE_MORE_THAN_ONE_FACE);
                                 }
-                                editor.commit();
+
+                            } else {
+                                publishProgress("Unable to detect..");
+                                cameraError = new CameraError("Sorry, please click a clear photo of your face with good lighting.", CameraError.ErrorCodes.IMAGE_CAPTURED_INCORRECTLY);
                             }
 
-                            if (faceID_1 != null) {
-                                VerifyResult verification = faceServiceClient.verify(faceID_1, result[0].faceId);
-                                if (verification.isIdentical) {
-                                    Log.e(TAG, "doInBackground: " + "FAAAAD MASSSTT!!!" + verification.confidence );
-                                    //Toast.makeText(AzureFaceActivity.this, "FAAAAD MASSSTT!!!" + verification.confidence, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Log.e(TAG, "doInBackground: " + "LELE Confidenc!!!" + verification.confidence );
-
-                                    //Toast.makeText(AzureFaceActivity.this, "LELE Confidence" + verification.confidence, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                            faceID_1 = result.length > 0 ? result[0].faceId : null;
-                            //Log.e(TAG, "doInBackground: " + faceId);
-                            if (result == null){
-                                publishProgress(
-                                        "Detection Finished. Nothing detected");
-                                return null;
-                            }
-                            publishProgress(String.format(
-                                    "Detection Finished. %d face(s) detected",
-                                    result.length));
-                            return result;
+                            return face;
                         } catch (Exception e) {
-                            exceptionMessage = String.format(
-                                    "Detection failed: %s", e.getMessage());
+                            cameraError = new CameraError(String.format(
+                                    "Image capturing failed: %s", e.getMessage()), CameraError.ErrorCodes.IMAGE_UNKNOWN_ERROR);
                             return null;
                         }
                     }
@@ -244,19 +228,23 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
                         detectionProgressDialog.setMessage(progress[0]);
                     }
                     @Override
-                    protected void onPostExecute(Face[] result) {
+                    protected void onPostExecute(Face result) {
                         //TODO: update face frames
                         detectionProgressDialog.dismiss();
 
-                        if(!exceptionMessage.equals("")){
-                            showError(exceptionMessage);
-                        }
-                        if (result == null) return;
+                        if (cameraError != null) {
+                            showError(cameraError.toString());
 
-                        ImageView imageView = findViewById(R.id.image_initial_upload);
-                        imageView.setImageBitmap(
+                        }
+
+                        if (result == null) {
+                            return;
+                        } else{
+                            ImageView imageView = findViewById(R.id.image_initial_upload);
+                            imageView.setImageBitmap(
                                 drawFaceRectanglesOnBitmap(imageBitmap, result));
-                        imageBitmap.recycle();
+                            imageBitmap.recycle();
+                    }
                     }
                 };
 
@@ -267,8 +255,9 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Error")
                 .setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        openCameraButton.performClick();
                     }})
                 .create().show();
     }
@@ -276,7 +265,7 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
 
     // <snippet_drawrectangles>
     private static Bitmap drawFaceRectanglesOnBitmap(
-            Bitmap originalBitmap, Face[] faces) {
+            Bitmap originalBitmap, Face face) {
         Bitmap bitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
@@ -284,17 +273,46 @@ public class CameraUploadFirstImageActivity extends AppCompatActivity {
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.RED);
         paint.setStrokeWidth(10);
-        if (faces != null) {
-            for (Face face : faces) {
-                FaceRectangle faceRectangle = face.faceRectangle;
-                canvas.drawRect(
-                        faceRectangle.left,
-                        faceRectangle.top,
-                        faceRectangle.left + faceRectangle.width,
-                        faceRectangle.top + faceRectangle.height,
-                        paint);
-            }
+        if (face != null) {
+            FaceRectangle faceRectangle = face.faceRectangle;
+            canvas.drawRect(
+                    faceRectangle.left,
+                    faceRectangle.top,
+                    faceRectangle.left + faceRectangle.width,
+                    faceRectangle.top + faceRectangle.height,
+                    paint);
+
         }
         return bitmap;
+    }
+
+    class CameraError {
+        private String errorString;
+
+        private String errorCode;
+
+        public CameraError(String errorString, String errorCode) {
+            this.errorString = errorString;
+            this.errorCode = errorCode;
+        }
+
+        public String getErrorString() {
+            return errorString;
+        }
+
+        public String getErrorCode() {
+            return errorCode;
+        }
+
+        @Override
+        public String toString() {
+            return errorString + errorCode;
+        }
+
+        class ErrorCodes extends com.track.safezone.utils.ErrorCodes {
+            public static final String IMAGE_CAPTURED_INCORRECTLY = ERROR_CODE  + "111";
+            public static final String IMAGE_MORE_THAN_ONE_FACE = ERROR_CODE  + "222";
+            public static final String IMAGE_UNKNOWN_ERROR = ERROR_CODE  + "333";
+        }
     }
 }
